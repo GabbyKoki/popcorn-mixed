@@ -1,0 +1,25 @@
+# @package _global_
+defaults:
+  - _self_
+  - override /data: schmidt
+  - override /model: default
+  - override /training: default
+  - override /logger: hyper
+
+# Sweep configuration for ablation study
+hydra:
+  sweeper:
+    params:
+      data.fold_idx: 0 # 0,1,2,3,4
+      data.cell_embed_key: X_scgpt_bc_512
+      data.pert_embedding_key: esm2_gene_embedding_2560
+      training.n_bags: 10,20,50
+      training.sampler_type: "bootstrap","stratified","uniform"
+      model.hidden_dim: 64,128,256,512,1024
+      model.num_layers: 1,2,3,4
+      model.n_heads: 4,8
+      model.dropout: 0.1,0.2,0.3,0.4
+      model.lr: 0.01,0.001,0.0001
+      model.cell_loss_weight: 0,0.2,0.5,0.8
+      training.batch_size: 16,32,64
+      training.sample_ratio: 0.3,0.5,0.8

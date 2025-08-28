@@ -1,0 +1,532 @@
+[rank: 0] Seed set to 42
+wandb: Currently logged in as: chenjp0925 (chenjp0925-yale-university) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.21.0
+wandb: Run data is saved locally in ./wandb/run-20250827_021110-nnx7tlx9
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run experiment
+wandb: ⭐️ View project at https://wandb.ai/chenjp0925-yale-university/popcorn_mixed_mini_bags
+wandb: 🚀 View run at https://wandb.ai/chenjp0925-yale-university/popcorn_mixed_mini_bags/runs/nnx7tlx9
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+You are using a CUDA device ('NVIDIA H100 80GB HBM3') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name            | Type               | Params | Mode 
+---------------------------------------------------------------
+0 | encoder         | Sequential         | 37.0 K | train
+1 | gene_encoder    | Sequential         | 168 K  | train
+2 | transformer     | TransformerEncoder | 33.5 K | train
+3 | cell_classifier | Sequential         | 6.2 K  | train
+4 | prop_loss_fn    | MSELoss            | 0      | train
+5 | cell_loss_fn    | CrossEntropyLoss   | 0      | train
+---------------------------------------------------------------
+244 K     Trainable params
+0         Non-trainable params
+244 K     Total params
+0.979     Total estimated model params size (MB)
+26        Modules in train mode
+0         Modules in eval mode
+SLURM auto-requeueing enabled. Setting signal handlers.
+paths:
+  processed_data_dir: /gpfs/radev/home/jc4439/martinez_project/pop/data/schmidt/processed
+  matching_index_path: ${paths.processed_data_dir}/matching_index.pkl
+  log_dir: logs
+data:
+  fold_idx: 0
+  h5ad_filename: schmidt_emb_pca_scvi_scgpt_${data.fold_idx}_fix.h5ad
+  condition_col: gene
+  cluster_col: cluster_name
+  control_condition: NO-TARGET
+  split_col: split_${data.fold_idx}
+  cell_embed_key: X_scgpt_CP_512
+  pert_embedding_key: esm2_gene_embedding_2560
+  compute_matching: false
+model:
+  hidden_dim: 64
+  n_heads: 4
+  dim_feedforward: 128
+  num_layers: 1
+  dropout: 0.1
+  lr: 0.001
+  cell_loss_weight: 0.5
+training:
+  batch_size: 32
+  epochs: 100
+  seed: 42
+  n_bags: 50
+  sample_ratio: 0.3
+  accelerator: gpu
+  deterministic: true
+  enable_checkpointing: false
+  log_every_n_steps: 20
+  patience: 10
+logger:
+  project: popcorn_mixed_mini_bags
+  name: experiment
+  group: ${data.cell_embed_key}|${data.pert_embedding_key}|fold${data.fold_idx}
+  tags:
+  - run
+  - ${data.cell_embed_key}
+  - ${data.pert_embedding_key}
+  - fold${data.fold_idx}
+  log_model: true
+  save_dir: ${paths.log_dir}
+
+Train conditions: ['AKAP12', 'ALX4', 'APOBEC3C', 'BICDL2', 'CD247', ..., 'TAGAP', 'TNFRSF1A', 'TNFRSF9', 'VAV1', 'WT1']
+Length: 45
+Categories (70, object): ['ABCB10', 'AKAP12', 'ALX4', 'APOBEC3C', ..., 'TRAF3IP2', 'TRIM21', 'VAV1',
+                          'WT1']
+Val conditions: ['ARHGDIB', 'CBY1', 'EMP3', 'FOXL2NB', 'GRAP', 'MGST3', 'PRDM13', 'RAC2', 'TBX21', 'TRAF3IP2']
+Categories (70, object): ['ABCB10', 'AKAP12', 'ALX4', 'APOBEC3C', ..., 'TRAF3IP2', 'TRIM21', 'VAV1',
+                          'WT1']
+Test conditions: ['ABCB10', 'APOBEC3D', 'APOL2', 'CD2', 'CD28', ..., 'LTBR', 'NOTCH1', 'TNFRSF12A', 'TNFRSF1B', 'TRIM21']
+Length: 14
+Categories (70, object): ['ABCB10', 'AKAP12', 'ALX4', 'APOBEC3C', ..., 'TRAF3IP2', 'TRIM21', 'VAV1',
+                          'WT1']
+Sanity Checking: |          | 0/? [00:00<?, ?it/s]Sanity Checking:   0%|          | 0/1 [00:00<?, ?it/s]Sanity Checking DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s]/gpfs/radev/home/jc4439/.conda/envs/pop/lib/python3.10/site-packages/torch/nn/modules/transformer.py:502: UserWarning: The PyTorch API of nested tensors is in prototype stage and will change in the near future. (Triggered internally at ../aten/src/ATen/NestedTensorImpl.cpp:178.)
+  output = torch._nested_tensor_from_mask(
+Sanity Checking DataLoader 0: 100%|██████████| 1/1 [00:00<00:00,  4.50it/s]                                                                           /gpfs/radev/home/jc4439/.conda/envs/pop/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:310: The number of training batches (2) is smaller than the logging interval Trainer(log_every_n_steps=20). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+Training: |          | 0/? [00:00<?, ?it/s]Training:   0%|          | 0/2 [00:00<?, ?it/s]Epoch 0:   0%|          | 0/2 [00:00<?, ?it/s] Epoch 0:  50%|█████     | 1/2 [00:08<00:08,  0.12it/s]Epoch 0:  50%|█████     | 1/2 [00:08<00:08,  0.12it/s, v_num=tlx9]Epoch 0: 100%|██████████| 2/2 [00:12<00:00,  0.17it/s, v_num=tlx9]Epoch 0: 100%|██████████| 2/2 [00:12<00:00,  0.17it/s, v_num=tlx9]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.73it/s][A
+                                                                      [AEpoch 0: 100%|██████████| 2/2 [00:13<00:00,  0.15it/s, v_num=tlx9, val/prop_mse=0.00235, val/prop_r2=0.132, val/prop_pcc=0.393]Epoch 0: 100%|██████████| 2/2 [00:13<00:00,  0.15it/s, v_num=tlx9, val/prop_mse=0.00235, val/prop_r2=0.132, val/prop_pcc=0.393]Metric val/prop_mse improved. New best score: 0.002
+Epoch 0:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00235, val/prop_r2=0.132, val/prop_pcc=0.393]        Epoch 1:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00235, val/prop_r2=0.132, val/prop_pcc=0.393]Epoch 1:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00235, val/prop_r2=0.132, val/prop_pcc=0.393]Epoch 1:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00235, val/prop_r2=0.132, val/prop_pcc=0.393]Epoch 1: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00235, val/prop_r2=0.132, val/prop_pcc=0.393]Epoch 1: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00235, val/prop_r2=0.132, val/prop_pcc=0.393]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.41it/s][A
+                                                                      [AEpoch 1: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00222, val/prop_r2=0.217, val/prop_pcc=0.498]Epoch 1: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00222, val/prop_r2=0.217, val/prop_pcc=0.498]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.002
+Epoch 1:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00222, val/prop_r2=0.217, val/prop_pcc=0.498]        Epoch 2:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00222, val/prop_r2=0.217, val/prop_pcc=0.498]Epoch 2:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00222, val/prop_r2=0.217, val/prop_pcc=0.498]Epoch 2:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00222, val/prop_r2=0.217, val/prop_pcc=0.498]Epoch 2: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00222, val/prop_r2=0.217, val/prop_pcc=0.498]Epoch 2: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00222, val/prop_r2=0.217, val/prop_pcc=0.498]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.86it/s][A
+                                                                      [AEpoch 2: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.0021, val/prop_r2=0.288, val/prop_pcc=0.553] Epoch 2: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.0021, val/prop_r2=0.288, val/prop_pcc=0.553]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.002
+Epoch 2:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.0021, val/prop_r2=0.288, val/prop_pcc=0.553]        Epoch 3:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.0021, val/prop_r2=0.288, val/prop_pcc=0.553]Epoch 3:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.0021, val/prop_r2=0.288, val/prop_pcc=0.553]Epoch 3:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.0021, val/prop_r2=0.288, val/prop_pcc=0.553]Epoch 3: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.0021, val/prop_r2=0.288, val/prop_pcc=0.553]Epoch 3: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.0021, val/prop_r2=0.288, val/prop_pcc=0.553]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.32it/s][A
+                                                                      [AEpoch 3: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00198, val/prop_r2=0.359, val/prop_pcc=0.601]Epoch 3: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00198, val/prop_r2=0.359, val/prop_pcc=0.601]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.002
+Epoch 3:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00198, val/prop_r2=0.359, val/prop_pcc=0.601]        Epoch 4:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00198, val/prop_r2=0.359, val/prop_pcc=0.601]Epoch 4:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00198, val/prop_r2=0.359, val/prop_pcc=0.601]Epoch 4:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00198, val/prop_r2=0.359, val/prop_pcc=0.601]Epoch 4: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00198, val/prop_r2=0.359, val/prop_pcc=0.601]Epoch 4: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00198, val/prop_r2=0.359, val/prop_pcc=0.601]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.02it/s][A
+                                                                      [AEpoch 4: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00188, val/prop_r2=0.423, val/prop_pcc=0.640]Epoch 4: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00188, val/prop_r2=0.423, val/prop_pcc=0.640]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.002
+Epoch 4:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00188, val/prop_r2=0.423, val/prop_pcc=0.640]        Epoch 5:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00188, val/prop_r2=0.423, val/prop_pcc=0.640]Epoch 5:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00188, val/prop_r2=0.423, val/prop_pcc=0.640]Epoch 5:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00188, val/prop_r2=0.423, val/prop_pcc=0.640]Epoch 5: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00188, val/prop_r2=0.423, val/prop_pcc=0.640]Epoch 5: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00188, val/prop_r2=0.423, val/prop_pcc=0.640]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.03it/s][A
+                                                                      [AEpoch 5: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00179, val/prop_r2=0.482, val/prop_pcc=0.674]Epoch 5: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00179, val/prop_r2=0.482, val/prop_pcc=0.674]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.002
+Epoch 5:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00179, val/prop_r2=0.482, val/prop_pcc=0.674]        Epoch 6:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00179, val/prop_r2=0.482, val/prop_pcc=0.674]Epoch 6:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00179, val/prop_r2=0.482, val/prop_pcc=0.674]Epoch 6:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00179, val/prop_r2=0.482, val/prop_pcc=0.674]Epoch 6: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00179, val/prop_r2=0.482, val/prop_pcc=0.674]Epoch 6: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00179, val/prop_r2=0.482, val/prop_pcc=0.674]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.64it/s][A
+                                                                      [AEpoch 6: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00172, val/prop_r2=0.529, val/prop_pcc=0.696]Epoch 6: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00172, val/prop_r2=0.529, val/prop_pcc=0.696]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.002
+Epoch 6:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00172, val/prop_r2=0.529, val/prop_pcc=0.696]        Epoch 7:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00172, val/prop_r2=0.529, val/prop_pcc=0.696]Epoch 7:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00172, val/prop_r2=0.529, val/prop_pcc=0.696]Epoch 7:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00172, val/prop_r2=0.529, val/prop_pcc=0.696]Epoch 7: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00172, val/prop_r2=0.529, val/prop_pcc=0.696]Epoch 7: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00172, val/prop_r2=0.529, val/prop_pcc=0.696]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.17it/s][A
+                                                                      [AEpoch 7: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00166, val/prop_r2=0.565, val/prop_pcc=0.711]Epoch 7: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00166, val/prop_r2=0.565, val/prop_pcc=0.711]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.002
+Epoch 7:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00166, val/prop_r2=0.565, val/prop_pcc=0.711]        Epoch 8:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00166, val/prop_r2=0.565, val/prop_pcc=0.711]Epoch 8:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00166, val/prop_r2=0.565, val/prop_pcc=0.711]Epoch 8:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00166, val/prop_r2=0.565, val/prop_pcc=0.711]Epoch 8: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00166, val/prop_r2=0.565, val/prop_pcc=0.711]Epoch 8: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00166, val/prop_r2=0.565, val/prop_pcc=0.711]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.32it/s][A
+                                                                      [AEpoch 8: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.0016, val/prop_r2=0.593, val/prop_pcc=0.724] Epoch 8: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.0016, val/prop_r2=0.593, val/prop_pcc=0.724]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.002
+Epoch 8:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.0016, val/prop_r2=0.593, val/prop_pcc=0.724]        Epoch 9:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.0016, val/prop_r2=0.593, val/prop_pcc=0.724]Epoch 9:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.0016, val/prop_r2=0.593, val/prop_pcc=0.724]Epoch 9:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.0016, val/prop_r2=0.593, val/prop_pcc=0.724]Epoch 9: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.0016, val/prop_r2=0.593, val/prop_pcc=0.724]Epoch 9: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.0016, val/prop_r2=0.593, val/prop_pcc=0.724]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.88it/s][A
+                                                                      [AEpoch 9: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.00154, val/prop_r2=0.618, val/prop_pcc=0.739]Epoch 9: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.00154, val/prop_r2=0.618, val/prop_pcc=0.739]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.002
+Epoch 9:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00154, val/prop_r2=0.618, val/prop_pcc=0.739]        Epoch 10:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00154, val/prop_r2=0.618, val/prop_pcc=0.739]Epoch 10:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00154, val/prop_r2=0.618, val/prop_pcc=0.739]Epoch 10:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00154, val/prop_r2=0.618, val/prop_pcc=0.739]Epoch 10: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00154, val/prop_r2=0.618, val/prop_pcc=0.739]Epoch 10: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00154, val/prop_r2=0.618, val/prop_pcc=0.739]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.27it/s][A
+                                                                      [AEpoch 10: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00147, val/prop_r2=0.643, val/prop_pcc=0.757]Epoch 10: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00147, val/prop_r2=0.643, val/prop_pcc=0.757]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 10:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00147, val/prop_r2=0.643, val/prop_pcc=0.757]        Epoch 11:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00147, val/prop_r2=0.643, val/prop_pcc=0.757]Epoch 11:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00147, val/prop_r2=0.643, val/prop_pcc=0.757]Epoch 11:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00147, val/prop_r2=0.643, val/prop_pcc=0.757]Epoch 11: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00147, val/prop_r2=0.643, val/prop_pcc=0.757]Epoch 11: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00147, val/prop_r2=0.643, val/prop_pcc=0.757]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.57it/s][A
+                                                                      [AEpoch 11: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.0014, val/prop_r2=0.664, val/prop_pcc=0.774] Epoch 11: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.0014, val/prop_r2=0.664, val/prop_pcc=0.774]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 11:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.0014, val/prop_r2=0.664, val/prop_pcc=0.774]        Epoch 12:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.0014, val/prop_r2=0.664, val/prop_pcc=0.774]Epoch 12:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.0014, val/prop_r2=0.664, val/prop_pcc=0.774]Epoch 12:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.0014, val/prop_r2=0.664, val/prop_pcc=0.774]Epoch 12: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.0014, val/prop_r2=0.664, val/prop_pcc=0.774]Epoch 12: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.0014, val/prop_r2=0.664, val/prop_pcc=0.774]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.99it/s][A
+                                                                      [AEpoch 12: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00135, val/prop_r2=0.674, val/prop_pcc=0.786]Epoch 12: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00135, val/prop_r2=0.674, val/prop_pcc=0.786]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 12:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00135, val/prop_r2=0.674, val/prop_pcc=0.786]        Epoch 13:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00135, val/prop_r2=0.674, val/prop_pcc=0.786]Epoch 13:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00135, val/prop_r2=0.674, val/prop_pcc=0.786]Epoch 13:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00135, val/prop_r2=0.674, val/prop_pcc=0.786]Epoch 13: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00135, val/prop_r2=0.674, val/prop_pcc=0.786]Epoch 13: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00135, val/prop_r2=0.674, val/prop_pcc=0.786]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.48it/s][A
+                                                                      [AEpoch 13: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00132, val/prop_r2=0.678, val/prop_pcc=0.795]Epoch 13: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00132, val/prop_r2=0.678, val/prop_pcc=0.795]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 13:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00132, val/prop_r2=0.678, val/prop_pcc=0.795]        Epoch 14:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00132, val/prop_r2=0.678, val/prop_pcc=0.795]Epoch 14:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00132, val/prop_r2=0.678, val/prop_pcc=0.795]Epoch 14:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00132, val/prop_r2=0.678, val/prop_pcc=0.795]Epoch 14: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00132, val/prop_r2=0.678, val/prop_pcc=0.795]Epoch 14: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00132, val/prop_r2=0.678, val/prop_pcc=0.795]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.58it/s][A
+                                                                      [AEpoch 14: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00129, val/prop_r2=0.681, val/prop_pcc=0.802]Epoch 14: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00129, val/prop_r2=0.681, val/prop_pcc=0.802]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 14:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00129, val/prop_r2=0.681, val/prop_pcc=0.802]        Epoch 15:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00129, val/prop_r2=0.681, val/prop_pcc=0.802]Epoch 15:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00129, val/prop_r2=0.681, val/prop_pcc=0.802]Epoch 15:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00129, val/prop_r2=0.681, val/prop_pcc=0.802]Epoch 15: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00129, val/prop_r2=0.681, val/prop_pcc=0.802]Epoch 15: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00129, val/prop_r2=0.681, val/prop_pcc=0.802]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.82it/s][A
+                                                                      [AEpoch 15: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00126, val/prop_r2=0.689, val/prop_pcc=0.810]Epoch 15: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00126, val/prop_r2=0.689, val/prop_pcc=0.810]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 15:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00126, val/prop_r2=0.689, val/prop_pcc=0.810]        Epoch 16:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00126, val/prop_r2=0.689, val/prop_pcc=0.810]Epoch 16:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00126, val/prop_r2=0.689, val/prop_pcc=0.810]Epoch 16:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00126, val/prop_r2=0.689, val/prop_pcc=0.810]Epoch 16: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00126, val/prop_r2=0.689, val/prop_pcc=0.810]Epoch 16: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00126, val/prop_r2=0.689, val/prop_pcc=0.810]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.11it/s][A
+                                                                      [AEpoch 16: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00122, val/prop_r2=0.701, val/prop_pcc=0.817]Epoch 16: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00122, val/prop_r2=0.701, val/prop_pcc=0.817]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 16:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00122, val/prop_r2=0.701, val/prop_pcc=0.817]        Epoch 17:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00122, val/prop_r2=0.701, val/prop_pcc=0.817]Epoch 17:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00122, val/prop_r2=0.701, val/prop_pcc=0.817]Epoch 17:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00122, val/prop_r2=0.701, val/prop_pcc=0.817]Epoch 17: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00122, val/prop_r2=0.701, val/prop_pcc=0.817]Epoch 17: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00122, val/prop_r2=0.701, val/prop_pcc=0.817]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 43.95it/s][A
+                                                                      [AEpoch 17: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00118, val/prop_r2=0.711, val/prop_pcc=0.824]Epoch 17: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00118, val/prop_r2=0.711, val/prop_pcc=0.824]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 17:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00118, val/prop_r2=0.711, val/prop_pcc=0.824]        Epoch 18:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00118, val/prop_r2=0.711, val/prop_pcc=0.824]Epoch 18:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00118, val/prop_r2=0.711, val/prop_pcc=0.824]Epoch 18:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00118, val/prop_r2=0.711, val/prop_pcc=0.824]Epoch 18: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00118, val/prop_r2=0.711, val/prop_pcc=0.824]Epoch 18: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00118, val/prop_r2=0.711, val/prop_pcc=0.824]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.71it/s][A
+                                                                      [AEpoch 18: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00111, val/prop_r2=0.728, val/prop_pcc=0.842]Epoch 18: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00111, val/prop_r2=0.728, val/prop_pcc=0.842]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 18:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00111, val/prop_r2=0.728, val/prop_pcc=0.842]        Epoch 19:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00111, val/prop_r2=0.728, val/prop_pcc=0.842]Epoch 19:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00111, val/prop_r2=0.728, val/prop_pcc=0.842]Epoch 19:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00111, val/prop_r2=0.728, val/prop_pcc=0.842]Epoch 19: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00111, val/prop_r2=0.728, val/prop_pcc=0.842]Epoch 19: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00111, val/prop_r2=0.728, val/prop_pcc=0.842]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.37it/s][A
+                                                                      [AEpoch 19: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.00103, val/prop_r2=0.751, val/prop_pcc=0.865]Epoch 19: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.00103, val/prop_r2=0.751, val/prop_pcc=0.865]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 19:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00103, val/prop_r2=0.751, val/prop_pcc=0.865]        Epoch 20:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00103, val/prop_r2=0.751, val/prop_pcc=0.865]Epoch 20:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00103, val/prop_r2=0.751, val/prop_pcc=0.865]Epoch 20:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00103, val/prop_r2=0.751, val/prop_pcc=0.865]Epoch 20: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00103, val/prop_r2=0.751, val/prop_pcc=0.865]Epoch 20: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00103, val/prop_r2=0.751, val/prop_pcc=0.865]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.29it/s][A
+                                                                      [AEpoch 20: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000953, val/prop_r2=0.764, val/prop_pcc=0.882]Epoch 20: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000953, val/prop_r2=0.764, val/prop_pcc=0.882]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 20:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000953, val/prop_r2=0.764, val/prop_pcc=0.882]        Epoch 21:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000953, val/prop_r2=0.764, val/prop_pcc=0.882]Epoch 21:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000953, val/prop_r2=0.764, val/prop_pcc=0.882]Epoch 21:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000953, val/prop_r2=0.764, val/prop_pcc=0.882]Epoch 21: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000953, val/prop_r2=0.764, val/prop_pcc=0.882]Epoch 21: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000953, val/prop_r2=0.764, val/prop_pcc=0.882]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.00it/s][A
+                                                                      [AEpoch 21: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000875, val/prop_r2=0.784, val/prop_pcc=0.897]Epoch 21: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000875, val/prop_r2=0.784, val/prop_pcc=0.897]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 21:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000875, val/prop_r2=0.784, val/prop_pcc=0.897]        Epoch 22:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000875, val/prop_r2=0.784, val/prop_pcc=0.897]Epoch 22:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000875, val/prop_r2=0.784, val/prop_pcc=0.897]Epoch 22:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000875, val/prop_r2=0.784, val/prop_pcc=0.897]Epoch 22: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000875, val/prop_r2=0.784, val/prop_pcc=0.897]Epoch 22: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000875, val/prop_r2=0.784, val/prop_pcc=0.897]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.43it/s][A
+                                                                      [AEpoch 22: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000798, val/prop_r2=0.805, val/prop_pcc=0.911]Epoch 22: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000798, val/prop_r2=0.805, val/prop_pcc=0.911]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 22:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000798, val/prop_r2=0.805, val/prop_pcc=0.911]        Epoch 23:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000798, val/prop_r2=0.805, val/prop_pcc=0.911]Epoch 23:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000798, val/prop_r2=0.805, val/prop_pcc=0.911]Epoch 23:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000798, val/prop_r2=0.805, val/prop_pcc=0.911]Epoch 23: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000798, val/prop_r2=0.805, val/prop_pcc=0.911]Epoch 23: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000798, val/prop_r2=0.805, val/prop_pcc=0.911]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.16it/s][A
+                                                                      [AEpoch 23: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000749, val/prop_r2=0.812, val/prop_pcc=0.917]Epoch 23: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000749, val/prop_r2=0.812, val/prop_pcc=0.917]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 23:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000749, val/prop_r2=0.812, val/prop_pcc=0.917]        Epoch 24:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000749, val/prop_r2=0.812, val/prop_pcc=0.917]Epoch 24:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000749, val/prop_r2=0.812, val/prop_pcc=0.917]Epoch 24:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000749, val/prop_r2=0.812, val/prop_pcc=0.917]Epoch 24: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000749, val/prop_r2=0.812, val/prop_pcc=0.917]Epoch 24: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000749, val/prop_r2=0.812, val/prop_pcc=0.917]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.10it/s][A
+                                                                      [AEpoch 24: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000703, val/prop_r2=0.818, val/prop_pcc=0.921]Epoch 24: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000703, val/prop_r2=0.818, val/prop_pcc=0.921]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 24:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000703, val/prop_r2=0.818, val/prop_pcc=0.921]        Epoch 25:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000703, val/prop_r2=0.818, val/prop_pcc=0.921]Epoch 25:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000703, val/prop_r2=0.818, val/prop_pcc=0.921]Epoch 25:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000703, val/prop_r2=0.818, val/prop_pcc=0.921]Epoch 25: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000703, val/prop_r2=0.818, val/prop_pcc=0.921]Epoch 25: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000703, val/prop_r2=0.818, val/prop_pcc=0.921]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.14it/s][A
+                                                                      [AEpoch 25: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00065, val/prop_r2=0.826, val/prop_pcc=0.925] Epoch 25: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00065, val/prop_r2=0.826, val/prop_pcc=0.925]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 25:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00065, val/prop_r2=0.826, val/prop_pcc=0.925]        Epoch 26:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00065, val/prop_r2=0.826, val/prop_pcc=0.925]Epoch 26:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00065, val/prop_r2=0.826, val/prop_pcc=0.925]Epoch 26:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00065, val/prop_r2=0.826, val/prop_pcc=0.925]Epoch 26: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00065, val/prop_r2=0.826, val/prop_pcc=0.925]Epoch 26: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00065, val/prop_r2=0.826, val/prop_pcc=0.925]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.67it/s][A
+                                                                      [AEpoch 26: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000616, val/prop_r2=0.826, val/prop_pcc=0.927]Epoch 26: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000616, val/prop_r2=0.826, val/prop_pcc=0.927]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 26:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000616, val/prop_r2=0.826, val/prop_pcc=0.927]        Epoch 27:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000616, val/prop_r2=0.826, val/prop_pcc=0.927]Epoch 27:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000616, val/prop_r2=0.826, val/prop_pcc=0.927]Epoch 27:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000616, val/prop_r2=0.826, val/prop_pcc=0.927]Epoch 27: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000616, val/prop_r2=0.826, val/prop_pcc=0.927]Epoch 27: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000616, val/prop_r2=0.826, val/prop_pcc=0.927]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.88it/s][A
+                                                                      [AEpoch 27: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000609, val/prop_r2=0.811, val/prop_pcc=0.922]Epoch 27: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000609, val/prop_r2=0.811, val/prop_pcc=0.922]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 27:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000609, val/prop_r2=0.811, val/prop_pcc=0.922]        Epoch 28:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000609, val/prop_r2=0.811, val/prop_pcc=0.922]Epoch 28:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000609, val/prop_r2=0.811, val/prop_pcc=0.922]Epoch 28:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000609, val/prop_r2=0.811, val/prop_pcc=0.922]Epoch 28: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000609, val/prop_r2=0.811, val/prop_pcc=0.922]Epoch 28: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000609, val/prop_r2=0.811, val/prop_pcc=0.922]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.14it/s][A
+                                                                      [AEpoch 28: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000578, val/prop_r2=0.812, val/prop_pcc=0.922]Epoch 28: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000578, val/prop_r2=0.812, val/prop_pcc=0.922]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.001
+Epoch 28:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000578, val/prop_r2=0.812, val/prop_pcc=0.922]        Epoch 29:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000578, val/prop_r2=0.812, val/prop_pcc=0.922]Epoch 29:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000578, val/prop_r2=0.812, val/prop_pcc=0.922]Epoch 29:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000578, val/prop_r2=0.812, val/prop_pcc=0.922]Epoch 29: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000578, val/prop_r2=0.812, val/prop_pcc=0.922]Epoch 29: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000578, val/prop_r2=0.812, val/prop_pcc=0.922]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.60it/s][A
+                                                                      [AEpoch 29: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.861, val/prop_pcc=0.939] Epoch 29: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.861, val/prop_pcc=0.939]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 29:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.861, val/prop_pcc=0.939]        Epoch 30:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.861, val/prop_pcc=0.939]Epoch 30:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.861, val/prop_pcc=0.939]Epoch 30:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.861, val/prop_pcc=0.939]Epoch 30: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.861, val/prop_pcc=0.939]Epoch 30: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.861, val/prop_pcc=0.939]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.45it/s][A
+                                                                      [AEpoch 30: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000458, val/prop_r2=0.859, val/prop_pcc=0.936]Epoch 30: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000458, val/prop_r2=0.859, val/prop_pcc=0.936]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 30:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000458, val/prop_r2=0.859, val/prop_pcc=0.936]        Epoch 31:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000458, val/prop_r2=0.859, val/prop_pcc=0.936]Epoch 31:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000458, val/prop_r2=0.859, val/prop_pcc=0.936]Epoch 31:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000458, val/prop_r2=0.859, val/prop_pcc=0.936]Epoch 31: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000458, val/prop_r2=0.859, val/prop_pcc=0.936]Epoch 31: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000458, val/prop_r2=0.859, val/prop_pcc=0.936]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.13it/s][A
+                                                                      [AEpoch 31: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.841, val/prop_pcc=0.929] Epoch 31: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.841, val/prop_pcc=0.929]Epoch 31:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.841, val/prop_pcc=0.929]        Epoch 32:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.841, val/prop_pcc=0.929]Epoch 32:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.841, val/prop_pcc=0.929]Epoch 32:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.841, val/prop_pcc=0.929]Epoch 32: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.841, val/prop_pcc=0.929]Epoch 32: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00047, val/prop_r2=0.841, val/prop_pcc=0.929]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 44.88it/s][A
+                                                                      [AEpoch 32: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000434, val/prop_r2=0.846, val/prop_pcc=0.933]Epoch 32: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000434, val/prop_r2=0.846, val/prop_pcc=0.933]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 32:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000434, val/prop_r2=0.846, val/prop_pcc=0.933]        Epoch 33:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000434, val/prop_r2=0.846, val/prop_pcc=0.933]Epoch 33:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000434, val/prop_r2=0.846, val/prop_pcc=0.933]Epoch 33:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000434, val/prop_r2=0.846, val/prop_pcc=0.933]Epoch 33: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000434, val/prop_r2=0.846, val/prop_pcc=0.933]Epoch 33: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000434, val/prop_r2=0.846, val/prop_pcc=0.933]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 46.27it/s][A
+                                                                      [AEpoch 33: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000396, val/prop_r2=0.855, val/prop_pcc=0.938]Epoch 33: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000396, val/prop_r2=0.855, val/prop_pcc=0.938]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 33:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000396, val/prop_r2=0.855, val/prop_pcc=0.938]        Epoch 34:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000396, val/prop_r2=0.855, val/prop_pcc=0.938]Epoch 34:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000396, val/prop_r2=0.855, val/prop_pcc=0.938]Epoch 34:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000396, val/prop_r2=0.855, val/prop_pcc=0.938]Epoch 34: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000396, val/prop_r2=0.855, val/prop_pcc=0.938]Epoch 34: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000396, val/prop_r2=0.855, val/prop_pcc=0.938]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 46.21it/s][A
+                                                                      [AEpoch 34: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000381, val/prop_r2=0.854, val/prop_pcc=0.937]Epoch 34: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000381, val/prop_r2=0.854, val/prop_pcc=0.937]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 34:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000381, val/prop_r2=0.854, val/prop_pcc=0.937]        Epoch 35:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000381, val/prop_r2=0.854, val/prop_pcc=0.937]Epoch 35:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000381, val/prop_r2=0.854, val/prop_pcc=0.937]Epoch 35:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000381, val/prop_r2=0.854, val/prop_pcc=0.937]Epoch 35: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000381, val/prop_r2=0.854, val/prop_pcc=0.937]Epoch 35: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000381, val/prop_r2=0.854, val/prop_pcc=0.937]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.90it/s][A
+                                                                      [AEpoch 35: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000366, val/prop_r2=0.852, val/prop_pcc=0.937]Epoch 35: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000366, val/prop_r2=0.852, val/prop_pcc=0.937]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 35:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000366, val/prop_r2=0.852, val/prop_pcc=0.937]        Epoch 36:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000366, val/prop_r2=0.852, val/prop_pcc=0.937]Epoch 36:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000366, val/prop_r2=0.852, val/prop_pcc=0.937]Epoch 36:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000366, val/prop_r2=0.852, val/prop_pcc=0.937]Epoch 36: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000366, val/prop_r2=0.852, val/prop_pcc=0.937]Epoch 36: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000366, val/prop_r2=0.852, val/prop_pcc=0.937]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.76it/s][A
+                                                                      [AEpoch 36: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000331, val/prop_r2=0.865, val/prop_pcc=0.941]Epoch 36: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000331, val/prop_r2=0.865, val/prop_pcc=0.941]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 36:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000331, val/prop_r2=0.865, val/prop_pcc=0.941]        Epoch 37:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000331, val/prop_r2=0.865, val/prop_pcc=0.941]Epoch 37:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000331, val/prop_r2=0.865, val/prop_pcc=0.941]Epoch 37:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000331, val/prop_r2=0.865, val/prop_pcc=0.941]Epoch 37: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000331, val/prop_r2=0.865, val/prop_pcc=0.941]Epoch 37: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000331, val/prop_r2=0.865, val/prop_pcc=0.941]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.64it/s][A
+                                                                      [AEpoch 37: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000293, val/prop_r2=0.879, val/prop_pcc=0.946]Epoch 37: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000293, val/prop_r2=0.879, val/prop_pcc=0.946]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 37:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000293, val/prop_r2=0.879, val/prop_pcc=0.946]        Epoch 38:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000293, val/prop_r2=0.879, val/prop_pcc=0.946]Epoch 38:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000293, val/prop_r2=0.879, val/prop_pcc=0.946]Epoch 38:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000293, val/prop_r2=0.879, val/prop_pcc=0.946]Epoch 38: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000293, val/prop_r2=0.879, val/prop_pcc=0.946]Epoch 38: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000293, val/prop_r2=0.879, val/prop_pcc=0.946]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 46.25it/s][A
+                                                                      [AEpoch 38: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000257, val/prop_r2=0.891, val/prop_pcc=0.952]Epoch 38: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000257, val/prop_r2=0.891, val/prop_pcc=0.952]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 38:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000257, val/prop_r2=0.891, val/prop_pcc=0.952]        Epoch 39:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000257, val/prop_r2=0.891, val/prop_pcc=0.952]Epoch 39:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000257, val/prop_r2=0.891, val/prop_pcc=0.952]Epoch 39:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000257, val/prop_r2=0.891, val/prop_pcc=0.952]Epoch 39: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000257, val/prop_r2=0.891, val/prop_pcc=0.952]Epoch 39: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000257, val/prop_r2=0.891, val/prop_pcc=0.952]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.75it/s][A
+                                                                      [AEpoch 39: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.878, val/prop_pcc=0.949]Epoch 39: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.878, val/prop_pcc=0.949]Epoch 39:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.878, val/prop_pcc=0.949]        Epoch 40:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.878, val/prop_pcc=0.949]Epoch 40:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.878, val/prop_pcc=0.949]Epoch 40:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.878, val/prop_pcc=0.949]Epoch 40: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.878, val/prop_pcc=0.949]Epoch 40: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.878, val/prop_pcc=0.949]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.06it/s][A
+                                                                      [AEpoch 40: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000305, val/prop_r2=0.852, val/prop_pcc=0.939]Epoch 40: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000305, val/prop_r2=0.852, val/prop_pcc=0.939]Epoch 40:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000305, val/prop_r2=0.852, val/prop_pcc=0.939]        Epoch 41:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000305, val/prop_r2=0.852, val/prop_pcc=0.939]Epoch 41:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000305, val/prop_r2=0.852, val/prop_pcc=0.939]Epoch 41:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000305, val/prop_r2=0.852, val/prop_pcc=0.939]Epoch 41: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000305, val/prop_r2=0.852, val/prop_pcc=0.939]Epoch 41: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000305, val/prop_r2=0.852, val/prop_pcc=0.939]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 46.10it/s][A
+                                                                      [AEpoch 41: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000287, val/prop_r2=0.866, val/prop_pcc=0.940]Epoch 41: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000287, val/prop_r2=0.866, val/prop_pcc=0.940]Epoch 41:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000287, val/prop_r2=0.866, val/prop_pcc=0.940]        Epoch 42:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000287, val/prop_r2=0.866, val/prop_pcc=0.940]Epoch 42:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000287, val/prop_r2=0.866, val/prop_pcc=0.940]Epoch 42:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000287, val/prop_r2=0.866, val/prop_pcc=0.940]Epoch 42: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000287, val/prop_r2=0.866, val/prop_pcc=0.940]Epoch 42: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000287, val/prop_r2=0.866, val/prop_pcc=0.940]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 46.05it/s][A
+                                                                      [AEpoch 42: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000243, val/prop_r2=0.884, val/prop_pcc=0.949]Epoch 42: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000243, val/prop_r2=0.884, val/prop_pcc=0.949]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 42:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000243, val/prop_r2=0.884, val/prop_pcc=0.949]        Epoch 43:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000243, val/prop_r2=0.884, val/prop_pcc=0.949]Epoch 43:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000243, val/prop_r2=0.884, val/prop_pcc=0.949]Epoch 43:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000243, val/prop_r2=0.884, val/prop_pcc=0.949]Epoch 43: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000243, val/prop_r2=0.884, val/prop_pcc=0.949]Epoch 43: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000243, val/prop_r2=0.884, val/prop_pcc=0.949]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.85it/s][A
+                                                                      [AEpoch 43: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000245, val/prop_r2=0.882, val/prop_pcc=0.948]Epoch 43: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000245, val/prop_r2=0.882, val/prop_pcc=0.948]Epoch 43:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000245, val/prop_r2=0.882, val/prop_pcc=0.948]        Epoch 44:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000245, val/prop_r2=0.882, val/prop_pcc=0.948]Epoch 44:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000245, val/prop_r2=0.882, val/prop_pcc=0.948]Epoch 44:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000245, val/prop_r2=0.882, val/prop_pcc=0.948]Epoch 44: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000245, val/prop_r2=0.882, val/prop_pcc=0.948]Epoch 44: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000245, val/prop_r2=0.882, val/prop_pcc=0.948]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.36it/s][A
+                                                                      [AEpoch 44: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000277, val/prop_r2=0.869, val/prop_pcc=0.942]Epoch 44: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000277, val/prop_r2=0.869, val/prop_pcc=0.942]Epoch 44:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000277, val/prop_r2=0.869, val/prop_pcc=0.942]        Epoch 45:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000277, val/prop_r2=0.869, val/prop_pcc=0.942]Epoch 45:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000277, val/prop_r2=0.869, val/prop_pcc=0.942]Epoch 45:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000277, val/prop_r2=0.869, val/prop_pcc=0.942]Epoch 45: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000277, val/prop_r2=0.869, val/prop_pcc=0.942]Epoch 45: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000277, val/prop_r2=0.869, val/prop_pcc=0.942]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.64it/s][A
+                                                                      [AEpoch 45: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000282, val/prop_r2=0.863, val/prop_pcc=0.941]Epoch 45: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000282, val/prop_r2=0.863, val/prop_pcc=0.941]Epoch 45:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000282, val/prop_r2=0.863, val/prop_pcc=0.941]        Epoch 46:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000282, val/prop_r2=0.863, val/prop_pcc=0.941]Epoch 46:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000282, val/prop_r2=0.863, val/prop_pcc=0.941]Epoch 46:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000282, val/prop_r2=0.863, val/prop_pcc=0.941]Epoch 46: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000282, val/prop_r2=0.863, val/prop_pcc=0.941]Epoch 46: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000282, val/prop_r2=0.863, val/prop_pcc=0.941]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.36it/s][A
+                                                                      [AEpoch 46: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000322, val/prop_r2=0.843, val/prop_pcc=0.935]Epoch 46: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000322, val/prop_r2=0.843, val/prop_pcc=0.935]Epoch 46:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000322, val/prop_r2=0.843, val/prop_pcc=0.935]        Epoch 47:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000322, val/prop_r2=0.843, val/prop_pcc=0.935]Epoch 47:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000322, val/prop_r2=0.843, val/prop_pcc=0.935]Epoch 47:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000322, val/prop_r2=0.843, val/prop_pcc=0.935]Epoch 47: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000322, val/prop_r2=0.843, val/prop_pcc=0.935]Epoch 47: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000322, val/prop_r2=0.843, val/prop_pcc=0.935]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.19it/s][A
+                                                                      [AEpoch 47: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000236, val/prop_r2=0.891, val/prop_pcc=0.951]Epoch 47: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000236, val/prop_r2=0.891, val/prop_pcc=0.951]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 47:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000236, val/prop_r2=0.891, val/prop_pcc=0.951]        Epoch 48:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000236, val/prop_r2=0.891, val/prop_pcc=0.951]Epoch 48:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000236, val/prop_r2=0.891, val/prop_pcc=0.951]Epoch 48:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000236, val/prop_r2=0.891, val/prop_pcc=0.951]Epoch 48: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000236, val/prop_r2=0.891, val/prop_pcc=0.951]Epoch 48: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000236, val/prop_r2=0.891, val/prop_pcc=0.951]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.64it/s][A
+                                                                      [AEpoch 48: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000311, val/prop_r2=0.849, val/prop_pcc=0.934]Epoch 48: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000311, val/prop_r2=0.849, val/prop_pcc=0.934]Epoch 48:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000311, val/prop_r2=0.849, val/prop_pcc=0.934]        Epoch 49:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000311, val/prop_r2=0.849, val/prop_pcc=0.934]Epoch 49:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000311, val/prop_r2=0.849, val/prop_pcc=0.934]Epoch 49:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000311, val/prop_r2=0.849, val/prop_pcc=0.934]Epoch 49: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000311, val/prop_r2=0.849, val/prop_pcc=0.934]Epoch 49: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000311, val/prop_r2=0.849, val/prop_pcc=0.934]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.59it/s][A
+                                                                      [AEpoch 49: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.000294, val/prop_r2=0.858, val/prop_pcc=0.943]Epoch 49: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.000294, val/prop_r2=0.858, val/prop_pcc=0.943]Epoch 49:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000294, val/prop_r2=0.858, val/prop_pcc=0.943]        Epoch 50:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000294, val/prop_r2=0.858, val/prop_pcc=0.943]Epoch 50:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000294, val/prop_r2=0.858, val/prop_pcc=0.943]Epoch 50:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000294, val/prop_r2=0.858, val/prop_pcc=0.943]Epoch 50: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000294, val/prop_r2=0.858, val/prop_pcc=0.943]Epoch 50: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000294, val/prop_r2=0.858, val/prop_pcc=0.943]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 46.12it/s][A
+                                                                      [AEpoch 50: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.880, val/prop_pcc=0.945]Epoch 50: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.880, val/prop_pcc=0.945]Epoch 50:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.880, val/prop_pcc=0.945]        Epoch 51:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.880, val/prop_pcc=0.945]Epoch 51:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.880, val/prop_pcc=0.945]Epoch 51:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.880, val/prop_pcc=0.945]Epoch 51: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.880, val/prop_pcc=0.945]Epoch 51: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.880, val/prop_pcc=0.945]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.73it/s][A
+                                                                      [AEpoch 51: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.873, val/prop_pcc=0.947]Epoch 51: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.873, val/prop_pcc=0.947]Epoch 51:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.873, val/prop_pcc=0.947]        Epoch 52:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.873, val/prop_pcc=0.947]Epoch 52:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.873, val/prop_pcc=0.947]Epoch 52:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.873, val/prop_pcc=0.947]Epoch 52: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.873, val/prop_pcc=0.947]Epoch 52: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000261, val/prop_r2=0.873, val/prop_pcc=0.947]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.62it/s][A
+                                                                      [AEpoch 52: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000296, val/prop_r2=0.855, val/prop_pcc=0.940]Epoch 52: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000296, val/prop_r2=0.855, val/prop_pcc=0.940]Epoch 52:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000296, val/prop_r2=0.855, val/prop_pcc=0.940]        Epoch 53:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000296, val/prop_r2=0.855, val/prop_pcc=0.940]Epoch 53:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000296, val/prop_r2=0.855, val/prop_pcc=0.940]Epoch 53:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000296, val/prop_r2=0.855, val/prop_pcc=0.940]Epoch 53: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000296, val/prop_r2=0.855, val/prop_pcc=0.940]Epoch 53: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000296, val/prop_r2=0.855, val/prop_pcc=0.940]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.81it/s][A
+                                                                      [AEpoch 53: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000231, val/prop_r2=0.889, val/prop_pcc=0.951]Epoch 53: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000231, val/prop_r2=0.889, val/prop_pcc=0.951]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 53:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000231, val/prop_r2=0.889, val/prop_pcc=0.951]        Epoch 54:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000231, val/prop_r2=0.889, val/prop_pcc=0.951]Epoch 54:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000231, val/prop_r2=0.889, val/prop_pcc=0.951]Epoch 54:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000231, val/prop_r2=0.889, val/prop_pcc=0.951]Epoch 54: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000231, val/prop_r2=0.889, val/prop_pcc=0.951]Epoch 54: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000231, val/prop_r2=0.889, val/prop_pcc=0.951]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.80it/s][A
+                                                                      [AEpoch 54: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 54: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 54:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.869, val/prop_pcc=0.946]        Epoch 55:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 55:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 55:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 55: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 55: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.869, val/prop_pcc=0.946]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.35it/s][A
+                                                                      [AEpoch 55: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 55: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 55:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.869, val/prop_pcc=0.946]        Epoch 56:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 56:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 56:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 56: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.869, val/prop_pcc=0.946]Epoch 56: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000264, val/prop_r2=0.869, val/prop_pcc=0.946]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 46.10it/s][A
+                                                                      [AEpoch 56: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00022, val/prop_r2=0.894, val/prop_pcc=0.954] Epoch 56: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00022, val/prop_r2=0.894, val/prop_pcc=0.954]Metric val/prop_mse improved by 0.000 >= min_delta = 0.0. New best score: 0.000
+Epoch 56:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00022, val/prop_r2=0.894, val/prop_pcc=0.954]        Epoch 57:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00022, val/prop_r2=0.894, val/prop_pcc=0.954]Epoch 57:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00022, val/prop_r2=0.894, val/prop_pcc=0.954]Epoch 57:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00022, val/prop_r2=0.894, val/prop_pcc=0.954]Epoch 57: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00022, val/prop_r2=0.894, val/prop_pcc=0.954]Epoch 57: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00022, val/prop_r2=0.894, val/prop_pcc=0.954]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.70it/s][A
+                                                                      [AEpoch 57: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000266, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 57: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000266, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 57:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000266, val/prop_r2=0.866, val/prop_pcc=0.945]        Epoch 58:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000266, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 58:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000266, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 58:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000266, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 58: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000266, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 58: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000266, val/prop_r2=0.866, val/prop_pcc=0.945]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.39it/s][A
+                                                                      [AEpoch 58: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000275, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 58: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000275, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 58:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000275, val/prop_r2=0.866, val/prop_pcc=0.945]        Epoch 59:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000275, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 59:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000275, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 59:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000275, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 59: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000275, val/prop_r2=0.866, val/prop_pcc=0.945]Epoch 59: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000275, val/prop_r2=0.866, val/prop_pcc=0.945]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.72it/s][A
+                                                                      [AEpoch 59: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.00026, val/prop_r2=0.872, val/prop_pcc=0.948] Epoch 59: 100%|██████████| 2/2 [00:12<00:00,  0.16it/s, v_num=tlx9, val/prop_mse=0.00026, val/prop_r2=0.872, val/prop_pcc=0.948]Epoch 59:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00026, val/prop_r2=0.872, val/prop_pcc=0.948]        Epoch 60:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00026, val/prop_r2=0.872, val/prop_pcc=0.948]Epoch 60:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00026, val/prop_r2=0.872, val/prop_pcc=0.948]Epoch 60:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00026, val/prop_r2=0.872, val/prop_pcc=0.948]Epoch 60: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00026, val/prop_r2=0.872, val/prop_pcc=0.948]Epoch 60: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00026, val/prop_r2=0.872, val/prop_pcc=0.948]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.52it/s][A
+                                                                      [AEpoch 60: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000241, val/prop_r2=0.881, val/prop_pcc=0.951]Epoch 60: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000241, val/prop_r2=0.881, val/prop_pcc=0.951]Epoch 60:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000241, val/prop_r2=0.881, val/prop_pcc=0.951]        Epoch 61:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000241, val/prop_r2=0.881, val/prop_pcc=0.951]Epoch 61:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000241, val/prop_r2=0.881, val/prop_pcc=0.951]Epoch 61:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000241, val/prop_r2=0.881, val/prop_pcc=0.951]Epoch 61: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000241, val/prop_r2=0.881, val/prop_pcc=0.951]Epoch 61: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000241, val/prop_r2=0.881, val/prop_pcc=0.951]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 46.00it/s][A
+                                                                      [AEpoch 61: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.870, val/prop_pcc=0.949]Epoch 61: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.870, val/prop_pcc=0.949]Epoch 61:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.870, val/prop_pcc=0.949]        Epoch 62:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.870, val/prop_pcc=0.949]Epoch 62:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.870, val/prop_pcc=0.949]Epoch 62:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.870, val/prop_pcc=0.949]Epoch 62: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.870, val/prop_pcc=0.949]Epoch 62: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000262, val/prop_r2=0.870, val/prop_pcc=0.949]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 46.17it/s][A
+                                                                      [AEpoch 62: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.854, val/prop_pcc=0.945]Epoch 62: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.854, val/prop_pcc=0.945]Epoch 62:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.854, val/prop_pcc=0.945]        Epoch 63:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.854, val/prop_pcc=0.945]Epoch 63:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.854, val/prop_pcc=0.945]Epoch 63:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.854, val/prop_pcc=0.945]Epoch 63: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.854, val/prop_pcc=0.945]Epoch 63: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.854, val/prop_pcc=0.945]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.66it/s][A
+                                                                      [AEpoch 63: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00034, val/prop_r2=0.832, val/prop_pcc=0.939] Epoch 63: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.00034, val/prop_r2=0.832, val/prop_pcc=0.939]Epoch 63:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00034, val/prop_r2=0.832, val/prop_pcc=0.939]        Epoch 64:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.00034, val/prop_r2=0.832, val/prop_pcc=0.939]Epoch 64:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00034, val/prop_r2=0.832, val/prop_pcc=0.939]Epoch 64:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.00034, val/prop_r2=0.832, val/prop_pcc=0.939]Epoch 64: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00034, val/prop_r2=0.832, val/prop_pcc=0.939]Epoch 64: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.00034, val/prop_r2=0.832, val/prop_pcc=0.939]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.60it/s][A
+                                                                      [AEpoch 64: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000292, val/prop_r2=0.850, val/prop_pcc=0.935]Epoch 64: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000292, val/prop_r2=0.850, val/prop_pcc=0.935]Epoch 64:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000292, val/prop_r2=0.850, val/prop_pcc=0.935]        Epoch 65:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000292, val/prop_r2=0.850, val/prop_pcc=0.935]Epoch 65:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000292, val/prop_r2=0.850, val/prop_pcc=0.935]Epoch 65:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000292, val/prop_r2=0.850, val/prop_pcc=0.935]Epoch 65: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000292, val/prop_r2=0.850, val/prop_pcc=0.935]Epoch 65: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000292, val/prop_r2=0.850, val/prop_pcc=0.935]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.64it/s][A
+                                                                      [AEpoch 65: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.850, val/prop_pcc=0.946]Epoch 65: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.850, val/prop_pcc=0.946]Epoch 65:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.850, val/prop_pcc=0.946]        Epoch 66:   0%|          | 0/2 [00:00<?, ?it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.850, val/prop_pcc=0.946]Epoch 66:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.850, val/prop_pcc=0.946]Epoch 66:  50%|█████     | 1/2 [00:06<00:06,  0.15it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.850, val/prop_pcc=0.946]Epoch 66: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.850, val/prop_pcc=0.946]Epoch 66: 100%|██████████| 2/2 [00:10<00:00,  0.19it/s, v_num=tlx9, val/prop_mse=0.000298, val/prop_r2=0.850, val/prop_pcc=0.946]
+Validation: |          | 0/? [00:00<?, ?it/s][A
+Validation:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s][A
+Validation DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 45.97it/s][A
+                                                                      [AEpoch 66: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000258, val/prop_r2=0.873, val/prop_pcc=0.948]Epoch 66: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000258, val/prop_r2=0.873, val/prop_pcc=0.948]Monitored metric val/prop_mse did not improve in the last 10 records. Best score: 0.000. Signaling Trainer to stop.
+Epoch 66: 100%|██████████| 2/2 [00:11<00:00,  0.17it/s, v_num=tlx9, val/prop_mse=0.000258, val/prop_r2=0.873, val/prop_pcc=0.948]LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+SLURM auto-requeueing enabled. Setting signal handlers.
+
+Testing: |          | 0/? [00:00<?, ?it/s]Testing:   0%|          | 0/1 [00:00<?, ?it/s]Testing DataLoader 0:   0%|          | 0/1 [00:00<?, ?it/s]Testing DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 34.81it/s]Testing DataLoader 0: 100%|██████████| 1/1 [00:00<00:00, 33.60it/s]
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│       test/prop_mse       │  0.00031498316093347967   │
+│       test/prop_pcc       │    0.9336896538734436     │
+│       test/prop_r2        │    0.8429245352745056     │
+└───────────────────────────┴───────────────────────────┘
+/gpfs/radev/project/martinez_maria/jc4439/pop/pop-mix-samples/train.py:256: UserWarning:
+
+set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator.
+
+/gpfs/radev/project/martinez_maria/jc4439/pop/pop-mix-samples/train.py:258: UserWarning:
+
+Tight layout not applied. The bottom and top margins cannot be made large enough to accommodate all Axes decorations.
+
+/gpfs/radev/project/martinez_maria/jc4439/pop/pop-mix-samples/train.py:269: UserWarning:
+
+set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator.
+
+/gpfs/radev/project/martinez_maria/jc4439/pop/pop-mix-samples/train.py:271: UserWarning:
+
+Tight layout not applied. The bottom and top margins cannot be made large enough to accommodate all Axes decorations.
+
+wandb:                                                                                
+wandb: 
+wandb: Run history:
+wandb:                 epoch ▁▂▂▂▂▂▂▂▃▃▃▄▄▄▄▄▄▄▅▅▅▅▅▅▅▆▆▆▆▆▆▆▇▇▇▇▇▇██
+wandb:         test/prop_mse ▁
+wandb:         test/prop_pcc ▁
+wandb:          test/prop_r2 ▁
+wandb: train/cell_loss_epoch █▇▇▇▇▆▆▆▅▅▅▅▄▄▄▄▃▃▃▃▃▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:  train/cell_loss_step █▆▃▂▂▁
+wandb:      train/loss_epoch ██▇▇▇▇▆▆▅▅▅▄▄▄▄▃▃▃▃▃▂▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁
+wandb:       train/loss_step █▆▃▂▂▁
+wandb: train/prop_loss_epoch █▅▄▃▃▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:  train/prop_loss_step █▃▃▂▃▁
+wandb:   trainer/global_step ▁▁▁▁▁▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▄▅▅▅▆▆▆▆▆▆▇▇▇▇▇▇▇▇▇█
+wandb:          val/prop_mse ██▇▇▆▆▅▅▅▅▄▄▄▃▃▃▃▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:          val/prop_pcc ▁▂▃▃▄▄▄▅▅▅▆▆▇▇██████████████████████████
+wandb:           val/prop_r2 ▁▂▂▃▅▆▆▆▆▆▇▇▇▇▇▇█████████████████████▇██
+wandb: 
+wandb: Run summary:
+wandb:                 epoch 67
+wandb:         test/prop_mse 0.00031
+wandb:         test/prop_pcc 0.93369
+wandb:          test/prop_r2 0.84292
+wandb: train/cell_loss_epoch 1.66142
+wandb:  train/cell_loss_step 1.6986
+wandb:      train/loss_epoch 0.83072
+wandb:       train/loss_step 0.8493
+wandb: train/prop_loss_epoch 1e-05
+wandb:  train/prop_loss_step 0.0
+wandb:   trainer/global_step 134
+wandb:          val/prop_mse 0.00026
+wandb:          val/prop_pcc 0.94843
+wandb:           val/prop_r2 0.8729
+wandb: 
+wandb: 🚀 View run experiment at: https://wandb.ai/chenjp0925-yale-university/popcorn_mixed_mini_bags/runs/nnx7tlx9
+wandb: ⭐️ View project at: https://wandb.ai/chenjp0925-yale-university/popcorn_mixed_mini_bags
+wandb: Synced 5 W&B file(s), 3 media file(s), 16 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20250827_021110-nnx7tlx9/logs

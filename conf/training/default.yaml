@@ -1,0 +1,17 @@
+# Training parameters
+batch_size: 32
+epochs: 100
+seed: 42
+ood_mode: true
+
+# Mini-bag sampling configuration
+n_bags: 50          # Number of mini-bags to create from training data
+sample_ratio: 0.3   # Ratio of cells to sample in each mini-bag (0.0-1.0)
+sampler_type: "bootstrap"  # Type of sampler: "bootstrap", "stratified", "uniform"
+
+# Hardware configuration
+accelerator: "gpu"  # "gpu" or "cpu"
+deterministic: true
+enable_checkpointing: false
+log_every_n_steps: 20
+patience: 10

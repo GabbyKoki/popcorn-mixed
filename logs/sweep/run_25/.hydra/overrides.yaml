@@ -1,0 +1,10 @@
+- model.hidden_dim=512
+- model.n_heads=8
+- model.num_layers=2
+- model.dropout=0.2
+- model.cell_loss_weight=0.2
+- model.lr=0.001953862270452531
+- training.n_bags=10
+- training.sample_ratio=0.8
+- training.sampler_type=uniform
+- +sweep=optuna

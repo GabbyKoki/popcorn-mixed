@@ -1,0 +1,15 @@
+# @package _global_
+defaults:
+  - _self_
+  - override /data: schmidt
+  - override /model: default
+  - override /training: default
+  - override /logger: default
+
+# Sweep configuration for ablation study
+hydra:
+  sweeper:
+    params:
+      data.fold_idx: 4 # 0,1,2,3,4
+      data.cell_embed_key: X,X_pca_50,X_pca_100,X_scvi_10,X_scvi_50,X_scvi_100,X_scgpt_CP_512,X_scgpt_bc_512
+      data.pert_embedding_key: esm2_gene_embedding_2560,GenePT_gene_embedding_ada_text_1536,GenePT_gene_protein_embedding_model_3_text_3072

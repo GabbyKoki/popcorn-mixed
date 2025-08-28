@@ -1,0 +1,19 @@
+# @package _global_
+defaults:
+  - _self_
+  - override /data: schmidt
+  - override /model: default
+  - override /training: default
+  - override /logger: hyper
+
+# Direct overrides so single-run (+sweep=compensate) also applies
+data:
+  fold_idx: 0
+  cell_embed_key: X_scgpt_CP_512
+  pert_embedding_key: esm2_gene_embedding_2560
+
+# Sweep configuration (only used with -m / multirun)
+hydra:
+  sweeper:
+    params:
+      training.sample_ratio: 0.3,0.5,0.8

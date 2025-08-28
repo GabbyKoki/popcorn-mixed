@@ -1,0 +1,208 @@
+hydra:
+  run:
+    dir: logs/${now:%Y-%m-%d}_${now:%H-%M-%S}
+  sweep:
+    dir: logs/sweep
+    subdir: ${hydra.job.override_dirname}
+  launcher:
+    _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
+  sweeper:
+    _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
+    max_batch_size: null
+    params: null
+  help:
+    app_name: ${hydra.job.name}
+    header: '${hydra.help.app_name} is powered by Hydra.
+
+      '
+    footer: 'Powered by Hydra (https://hydra.cc)
+
+      Use --hydra-help to view Hydra specific help
+
+      '
+    template: '${hydra.help.header}
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (group=option)
+
+
+      $APP_CONFIG_GROUPS
+
+
+      == Config ==
+
+      Override anything in the config (foo.bar=value)
+
+
+      $CONFIG
+
+
+      ${hydra.help.footer}
+
+      '
+  hydra_help:
+    template: 'Hydra (${hydra.runtime.version})
+
+      See https://hydra.cc for more info.
+
+
+      == Flags ==
+
+      $FLAGS_HELP
+
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (For example, append hydra/job_logging=disabled
+      to command line)
+
+
+      $HYDRA_CONFIG_GROUPS
+
+
+      Use ''--cfg hydra'' to Show the Hydra config.
+
+      '
+    hydra_help: ???
+  hydra_logging:
+    version: 1
+    formatters:
+      simple:
+        format: '[%(asctime)s][HYDRA] %(message)s'
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: simple
+        stream: ext://sys.stdout
+    root:
+      level: INFO
+      handlers:
+      - console
+    loggers:
+      logging_example:
+        level: DEBUG
+    disable_existing_loggers: false
+  job_logging:
+    version: 1
+    formatters:
+      simple:
+        format: '[%(asctime)s][%(name)s][%(levelname)s] - %(message)s'
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: simple
+        stream: ext://sys.stdout
+      file:
+        class: logging.FileHandler
+        formatter: simple
+        filename: ${hydra.runtime.output_dir}/${hydra.job.name}.log
+    root:
+      level: INFO
+      handlers:
+      - console
+      - file
+    disable_existing_loggers: false
+  env: {}
+  mode: MULTIRUN
+  searchpath: []
+  callbacks: {}
+  output_subdir: .hydra
+  overrides:
+    hydra:
+    - hydra.mode=MULTIRUN
+    task:
+    - data.fold_idx=1,2,3,4
+  job:
+    name: train
+    chdir: null
+    override_dirname: data.fold_idx=1,2,3,4
+    id: ???
+    num: ???
+    config_name: config
+    env_set: {}
+    env_copy: []
+    config:
+      override_dirname:
+        kv_sep: '='
+        item_sep: ','
+        exclude_keys: []
+  runtime:
+    version: 1.3.2
+    version_base: '1.3'
+    cwd: /gpfs/radev/project/martinez_maria/jc4439/pop/pop-mix-samples
+    config_sources:
+    - path: hydra.conf
+      schema: pkg
+      provider: hydra
+    - path: /gpfs/radev/project/martinez_maria/jc4439/pop/pop-mix-samples/conf
+      schema: file
+      provider: main
+    - path: hydra_plugins.hydra_colorlog.conf
+      schema: pkg
+      provider: hydra-colorlog
+    - path: ''
+      schema: structured
+      provider: schema
+    output_dir: ???
+    choices:
+      logger: default
+      training: default
+      model: default
+      data: schmidt
+      paths: default
+      hydra/env: default
+      hydra/callbacks: null
+      hydra/job_logging: default
+      hydra/hydra_logging: default
+      hydra/hydra_help: default
+      hydra/help: default
+      hydra/sweeper: basic
+      hydra/launcher: basic
+      hydra/output: default
+  verbose: false
+paths:
+  processed_data_dir: /gpfs/radev/home/jc4439/martinez_project/pop/data/schmidt/processed
+  matching_index_path: ${paths.processed_data_dir}/matching_index.pkl
+  log_dir: logs
+data:
+  fold_idx: 0
+  h5ad_filename: schmidt_emb_pca_scvi_scgpt_${data.fold_idx}_fix.h5ad
+  condition_col: gene
+  cluster_col: cluster_name
+  control_condition: NO-TARGET
+  split_col: split_${data.fold_idx}
+  cell_embed_key: X_scgpt_CP_512
+  pert_embedding_key: esm2_gene_embedding_2560
+  compute_matching: false
+model:
+  hidden_dim: 64
+  n_heads: 4
+  dim_feedforward: 128
+  num_layers: 1
+  dropout: 0.1
+  lr: 0.001
+  cell_loss_weight: 0.5
+training:
+  batch_size: 32
+  epochs: 100
+  seed: 42
+  n_bags: 50
+  sample_ratio: 0.3
+  sampler_type: bootstrap
+  accelerator: gpu
+  deterministic: true
+  enable_checkpointing: false
+  log_every_n_steps: 20
+  patience: 10
+logger:
+  project: popcorn_mixed_mini_bags
+  name: experiment
+  group: ${data.cell_embed_key}|${data.pert_embedding_key}|fold${data.fold_idx}
+  tags:
+  - run
+  - ${data.cell_embed_key}
+  - ${data.pert_embedding_key}
+  - fold${data.fold_idx}
+  log_model: true
+  save_dir: ${paths.log_dir}

@@ -1,0 +1,18 @@
+# Data file configuration
+fold_idx: 0
+h5ad_filename: schmidt_emb_pca_scvi_scgpt_${data.fold_idx}_fix.h5ad
+
+# Column names
+condition_col: gene
+cluster_col: cluster_name
+control_condition: NO-TARGET
+
+# Split configuration
+split_col: split_${data.fold_idx}
+
+# Embedding keys
+cell_embed_key: X_scgpt_CP_512  # X or in adata.obsm "scVI_10", "scGPT", ...
+pert_embedding_key: esm2_gene_embedding_2560  # in adata.uns
+
+# Matching configuration
+compute_matching: false  # Whether to compute or load matching index

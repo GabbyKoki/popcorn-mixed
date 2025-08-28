@@ -1,0 +1,11 @@
+# @package _global_
+defaults:
+  - default
+
+# Override sampling configuration for stratified sampling
+training:
+  sampler_type: "stratified"  # Use stratified sampling to maintain class proportions
+  sample_ratio: 0.4          # Slightly higher ratio for stratified sampling
+  n_bags: 30                 # Fewer bags since stratified is more stable
+
+

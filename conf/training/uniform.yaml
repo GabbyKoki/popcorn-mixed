@@ -1,0 +1,11 @@
+# @package _global_
+defaults:
+  - default
+
+# Override sampling configuration for uniform sampling
+training:
+  sampler_type: "uniform"    # Use uniform sampling without replacement
+  sample_ratio: 0.5          # Higher ratio since no replacement
+  n_bags: 20                 # Fewer bags due to no replacement constraint
+
+

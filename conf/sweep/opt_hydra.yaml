@@ -1,0 +1,21 @@
+# @package _global_
+defaults:
+  - _self_
+  - override /data: schmidt
+  - override /model: default
+  - override /training: default
+  - override /logger: hyper
+
+# Sweep configuration for ablation study
+hydra:
+  sweeper:
+    params:
+      data.fold_idx: choice(1,2,3,4)  # Specify which fold to test
+      model.hidden_dim: choice(128,64)  # Range narrowed based on analysis
+      model.n_heads: 4  # Fixed to optimal value
+      model.num_layers: 2  # Fixed to optimal value
+      model.dropout: 0.4  # Fixed to optimal value
+      model.cell_loss_weight: choice(0.2,0.8)  # Two best choices
+      training.n_bags: choice(20,50)
+      training.sample_ratio: choice(0.3,0.5,0.8)  # Fixed typo and updated path
+      model.lr: choice(0.01,0.001)

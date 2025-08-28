@@ -1,0 +1,24 @@
+[32m[I 2025-08-27 03:21:23,575][0m A new study created in memory with name: pop_mixed_optuna[0m
+[2025-08-27 03:21:23,575][HYDRA] Study name: pop_mixed_optuna
+[2025-08-27 03:21:23,576][HYDRA] Storage: None
+[2025-08-27 03:21:23,576][HYDRA] Sampler: TPESampler
+[2025-08-27 03:21:23,576][HYDRA] Directions: ['maximize']
+[2025-08-27 03:21:23,577][HYDRA] Launching 1 jobs locally
+[2025-08-27 03:21:23,577][HYDRA] 	#0 : model.hidden_dim=128 model.n_heads=4 model.num_layers=2 model.dropout=0.4 model.cell_loss_weight=0.0 model.lr=0.00023270677083837802 training.n_bags=50 training.sample_ratio=0.5 training.sampler_type=uniform +sweep=optuna logger.project=popcorn_mixed_mini_bags_ood data.compute_matching=True
+Traceback (most recent call last):
+  File "/gpfs/radev/home/jc4439/.conda/envs/pop/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+OSError: [Errno 36] File name too long: 'logs/sweep/+sweep=optuna,data.compute_matching=True,logger.project=popcorn_mixed_mini_bags_ood,model.cell_loss_weight=0.0,model.dropout=0.4,model.hidden_dim=128,model.lr=0.00023270677083837802,model.n_heads=4,model.num_layers=2,training.n_bags=50,training.sample_ratio=0.5,training.sampler_type=uniform'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/radev/home/jc4439/.conda/envs/pop/lib/python3.10/pathlib.py", line 1184, in mkdir
+    if not exist_ok or not self.is_dir():
+  File "/gpfs/radev/home/jc4439/.conda/envs/pop/lib/python3.10/pathlib.py", line 1305, in is_dir
+    return S_ISDIR(self.stat().st_mode)
+  File "/gpfs/radev/home/jc4439/.conda/envs/pop/lib/python3.10/pathlib.py", line 1097, in stat
+    return self._accessor.stat(self, follow_symlinks=follow_symlinks)
+OSError: [Errno 36] File name too long: 'logs/sweep/+sweep=optuna,data.compute_matching=True,logger.project=popcorn_mixed_mini_bags_ood,model.cell_loss_weight=0.0,model.dropout=0.4,model.hidden_dim=128,model.lr=0.00023270677083837802,model.n_heads=4,model.num_layers=2,training.n_bags=50,training.sample_ratio=0.5,training.sampler_type=uniform'
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

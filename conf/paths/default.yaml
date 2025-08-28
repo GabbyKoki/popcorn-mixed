@@ -1,0 +1,6 @@
+# Data paths
+processed_data_dir: /gpfs/radev/home/jc4439/martinez_project/pop/data/schmidt/processed
+matching_index_path: ${paths.processed_data_dir}/matching_index.pkl
+
+# Logging paths
+log_dir: logs

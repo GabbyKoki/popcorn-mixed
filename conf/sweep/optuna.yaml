@@ -1,0 +1,35 @@
+# @package _global_
+defaults:
+  - _self_
+  - override /data: schmidt
+  - override /model: default
+  - override /training: default
+  - override /logger: hyper
+  - override /hydra/sweeper: optuna
+
+hydra:
+  sweep:
+    dir: logs/sweep
+    subdir: run_${hydra.job.num}
+  sweeper:
+    sampler:
+      _target_: optuna.samplers.TPESampler
+      seed: 42
+    direction: maximize
+    study_name: pop_mixed_optuna
+    n_trials: 80
+    n_jobs: 1
+    params:
+      # Discrete/choice spaces
+      model.hidden_dim: choice(64,128,256,512)
+      model.n_heads: choice(4,8)
+      model.num_layers: choice(1,2,3)
+      model.dropout: choice(0.1,0.2,0.4)
+      model.cell_loss_weight: choice(0.0,0.2,0.5)
+      # Continuous spaces
+      model.lr: tag(log, interval(1e-4, 1e-2)) 
+      training.n_bags: choice(10,50,100)
+      training.sample_ratio: choice(0.3,0.5,0.8,1.0)
+      training.sampler_type: choice("bootstrap", "stratified", "uniform")
+
+      
