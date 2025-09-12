@@ -7,7 +7,15 @@ import torch.nn.functional as F
 
 
 class TransformerMILLightning(LightningModule):
-    def __init__(self, input_dim, gene_input_dim, hidden_dim, output_dim, n_heads=4, dim_feedforward=None, lr=1e-3, cell_loss_weight=0.5, num_layers=1, dropout=0.1):
+    def __init__(self, input_dim, gene_input_dim, hidden_dim, output_dim, n_heads=4, dim_feedforward=None, lr=1e-3, cell_loss_weight=0.5, num_layers=1, dropout=0.1, prediction_mode="absolute"):
+        """
+        TransformerMIL model with dual-mode learning support.
+        
+        Args:
+            prediction_mode: str, "absolute" or "residual"
+                - "absolute": Directly predict proportions under perturbation conditions (p_pert)
+                - "residual": Predict change amount Δp, then add to p_control to get p_pert
+        """
         super().__init__()
 
         self.encoder = nn.Sequential(
@@ -46,7 +54,7 @@ class TransformerMILLightning(LightningModule):
         self.prop_loss_fn = nn.MSELoss()
         self.cell_loss_fn = nn.CrossEntropyLoss(ignore_index=-1)
 
-    def forward(self, cells, pert_emd, attention_mask):
+    def forward(self, cells, pert_emd, attention_mask, control_prop=None):
         B, N, _ = cells.size()  # B: batch size, N: max sequence length
         
         # Encode cells
@@ -70,11 +78,22 @@ class TransformerMILLightning(LightningModule):
         # Calculate proportions based on valid cells
         valid_probs = cell_probs * attention_mask.unsqueeze(-1).float()
         proportions = valid_probs.sum(dim=1) / attention_mask.sum(dim=1, keepdim=True)
-        return proportions, cell_logits
+        
+        # --- absolute vs residual ---
+        if self.hparams.prediction_mode == "absolute":
+            output_prop = proportions
+        elif self.hparams.prediction_mode == "residual":
+            if control_prop is None:
+                raise ValueError("control_prop must be provided in residual mode")
+            output_prop = control_prop + proportions  # proportions作为delta
+        else:
+            raise ValueError(f"Unknown prediction_mode: {self.hparams.prediction_mode}")
+        
+        return output_prop, cell_logits
 
     def training_step(self, batch, batch_idx):
-        bags, attn_mask, labels, cell_labels, pert_emd = batch
-        prop_pred, cell_logits = self(bags, pert_emd, attn_mask)
+        bags, attn_mask, labels, cell_labels, pert_emd, control_props = batch
+        prop_pred, cell_logits = self(bags, pert_emd, attn_mask, control_props)
 
         prop_loss = self.prop_loss_fn(prop_pred, labels)
         flat_logits = cell_logits.view(-1, cell_logits.size(-1))
@@ -91,8 +110,8 @@ class TransformerMILLightning(LightningModule):
         return loss
 
     def validation_step(self, batch, batch_idx):
-        bags, attn_mask, target_proportions, cell_labels, pert_emd = batch
-        prop_pred, cell_logits = self(bags, pert_emd, attn_mask)
+        bags, attn_mask, target_proportions, cell_labels, pert_emd, control_props = batch
+        prop_pred, cell_logits = self(bags, pert_emd, attn_mask, control_props)
 
         # --- Proportion metrics per bag ---
         # Each bag is a perturbation condition, compute metrics per bag
@@ -130,8 +149,8 @@ class TransformerMILLightning(LightningModule):
         }, prog_bar=True, on_epoch=True)
     
     def test_step(self, batch, batch_idx):
-        bags, attn_mask, target_proportions, cell_labels, pert_emd = batch
-        prop_pred, cell_logits = self(bags, pert_emd, attn_mask)
+        bags, attn_mask, target_proportions, cell_labels, pert_emd, control_props = batch
+        prop_pred, cell_logits = self(bags, pert_emd, attn_mask, control_props)
 
         # --- Proportion metrics per bag ---
         # Each bag is a perturbation condition, compute metrics per bag

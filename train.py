@@ -194,11 +194,12 @@ def main(cfg: DictConfig):
     with torch.no_grad():
         dataset_index = 0
         for batch in test_loader:
-            bags, attn_mask, target_proportions, _cell_labels, pert_emd = batch
+            bags, attn_mask, target_proportions, _cell_labels, pert_emd, control_props = batch
             bags = bags.to(device)
             attn_mask = attn_mask.to(device)
             pert_emd = pert_emd.to(device)
-            pred_prop, _ = trained_model(bags, pert_emd, attn_mask)
+            control_props = control_props.to(device)
+            pred_prop, _ = trained_model(bags, pert_emd, attn_mask, control_props)
             pred_prop = pred_prop.detach().cpu().numpy()
             target_np = target_proportions.detach().cpu().numpy()
 

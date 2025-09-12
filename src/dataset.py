@@ -8,13 +8,14 @@ from bag_sampler import BootstrapBagSampler
 
 
 def collate_batch(batch):
-    bags, labels, cell_labels, pert_emd = zip(*batch)
+    bags, labels, cell_labels, pert_emd, control_props = zip(*batch)
     padded_bags = pad_sequence(bags, batch_first=True)
     padded_cell_labels = pad_sequence(cell_labels, batch_first=True, padding_value=-1)
     padded_pert_emd = pad_sequence(pert_emd, batch_first=True)  # Each cell has its own pert embedding
     attention_mask = torch.tensor([[1] * len(b) + [0] * (padded_bags.size(1) - len(b)) for b in bags])
     labels = torch.stack(labels)
-    return padded_bags, attention_mask.bool(), labels, padded_cell_labels, padded_pert_emd
+    control_props = torch.stack(control_props)
+    return padded_bags, attention_mask.bool(), labels, padded_cell_labels, padded_pert_emd, control_props
 
 
 class PerturbationDataset(Dataset):
@@ -91,6 +92,12 @@ class PerturbationDataset(Dataset):
         label_series = label_series.cat.set_categories(self.class_list)
         proportions = label_series.value_counts(normalize=True).reindex(self.class_list, fill_value=0.0).values
         
+        # Calculate control proportions (for residual mode)
+        ctrl_labels = self.adata.obs.loc[ctrl_s][self.cluster_col].values
+        ctrl_label_series = pd.Series(ctrl_labels, dtype="category")
+        ctrl_label_series = ctrl_label_series.cat.set_categories(self.class_list)
+        control_proportions = ctrl_label_series.value_counts(normalize=True).reindex(self.class_list, fill_value=0.0).values
+        
         # Get control cell embeddings
         X_ctrl = torch.tensor(self.X[self.adata.obs.index.get_indexer(ctrl_s)], dtype=torch.float32)
         
@@ -112,7 +119,7 @@ class PerturbationDataset(Dataset):
         
         pert_emb_tensor = torch.stack(pert_emb_list)  # Shape: [n_cells, embedding_dim]
         
-        return X_ctrl, torch.tensor(proportions, dtype=torch.float32), cluster_idx, pert_emb_tensor
+        return X_ctrl, torch.tensor(proportions, dtype=torch.float32), cluster_idx, pert_emb_tensor, torch.tensor(control_proportions, dtype=torch.float32)
 
 
 class MixedConditionDataset(Dataset):
@@ -194,6 +201,12 @@ class MixedConditionDataset(Dataset):
         label_series = label_series.cat.set_categories(self.class_list)
         proportions = label_series.value_counts(normalize=True).reindex(self.class_list, fill_value=0.0).values
         
+        # Calculate control proportions (for residual mode)
+        ctrl_labels = self.adata.obs.loc[ctrl_cells][self.bag_creator.cluster_col].values
+        ctrl_label_series = pd.Series(ctrl_labels, dtype="category")
+        ctrl_label_series = ctrl_label_series.cat.set_categories(self.class_list)
+        control_proportions = ctrl_label_series.value_counts(normalize=True).reindex(self.class_list, fill_value=0.0).values
+        
         # Get control cell embeddings
         X_ctrl = torch.tensor(self.X[self.adata.obs.index.get_indexer(ctrl_cells)], dtype=torch.float32)
         
@@ -213,7 +226,7 @@ class MixedConditionDataset(Dataset):
         
         pert_emb_tensor = torch.stack(pert_emb_list)  # Shape: [n_cells, embedding_dim]
         
-        return X_ctrl, torch.tensor(proportions, dtype=torch.float32), cluster_idx, pert_emb_tensor
+        return X_ctrl, torch.tensor(proportions, dtype=torch.float32), cluster_idx, pert_emb_tensor, torch.tensor(control_proportions, dtype=torch.float32)
 
 
 class EvalPerturbationDataset(Dataset):
@@ -276,11 +289,16 @@ class EvalPerturbationDataset(Dataset):
         label_series = label_series.cat.set_categories(self.class_list)
         proportions = label_series.value_counts(normalize=True).reindex(self.class_list, fill_value=0.0).values
         
+        # Calculate control proportions (for residual mode)
+        ctrl_clusters = self.adata.obs.loc[sampled_ctrl][self.cluster_col].values
+        ctrl_label_series = pd.Series(ctrl_clusters, dtype="category")
+        ctrl_label_series = ctrl_label_series.cat.set_categories(self.class_list)
+        control_proportions = ctrl_label_series.value_counts(normalize=True).reindex(self.class_list, fill_value=0.0).values
+        
         # Get control cell embeddings (input)
         X_ctrl = torch.tensor(self.X[self.adata.obs.index.get_indexer(sampled_ctrl)], dtype=torch.float32)
         
         # Use control cell cluster labels as dummy labels (will be ignored in loss)
-        ctrl_clusters = self.adata.obs.loc[sampled_ctrl][self.cluster_col].values
         cluster_idx = [self.class_list.index(c) for c in ctrl_clusters]
         cluster_idx = torch.tensor(cluster_idx, dtype=torch.long)
         
@@ -296,4 +314,4 @@ class EvalPerturbationDataset(Dataset):
             
         pert_emb_tensor = torch.stack(pert_emb_list)  # Shape: [n_cells, embedding_dim]
         
-        return X_ctrl, torch.tensor(proportions, dtype=torch.float32), cluster_idx, pert_emb_tensor
+        return X_ctrl, torch.tensor(proportions, dtype=torch.float32), cluster_idx, pert_emb_tensor, torch.tensor(control_proportions, dtype=torch.float32)

@@ -8,3 +8,6 @@ dropout: 0.1
 # Learning parameters
 lr: 1e-3
 cell_loss_weight: 0.5
+
+# Prediction mode: "absolute" or "residual"
+prediction_mode: "absolute"

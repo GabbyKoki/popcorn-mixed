@@ -1,0 +1,13 @@
+# Transformer architecture
+hidden_dim: 64
+n_heads: 4
+dim_feedforward: 128  # hidden_dim * 2
+num_layers: 1
+dropout: 0.1
+
+# Learning parameters
+lr: 1e-3
+cell_loss_weight: 0.5
+
+# Prediction mode: "absolute" or "residual"
+prediction_mode: "residual"
