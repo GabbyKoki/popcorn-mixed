@@ -12,4 +12,4 @@
 source ~/.bashrc
 conda activate pop
 
-python train.py -m data.fold_idx=1,2,3,4
+python train.py -m data=all data.fold_idx=0,1,2,3,4

@@ -1,0 +1,15 @@
+defaults:
+  - _self_
+  - paths: default
+  - data: stim
+  - model: default
+  - training: default
+  - logger: default
+
+# Hydra configuration for output
+hydra:
+  run:
+    dir: logs/${now:%Y-%m-%d}_${now:%H-%M-%S}
+  sweep:
+    dir: logs/sweep
+    subdir: run_${hydra.job.num}

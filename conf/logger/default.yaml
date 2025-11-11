@@ -1,9 +1,8 @@
 # WandB configuration
 project: popcorn_mixed_mini_bags_ood
-name: "experiment"
+name: "${data.h5ad_filename}"
 group: "${data.cell_embed_key}|${data.pert_embedding_key}|fold${data.fold_idx}"
 tags:
-  - "run"
   - "${data.cell_embed_key}"
   - "${data.pert_embedding_key}"
   - "fold${data.fold_idx}"

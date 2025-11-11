@@ -20,11 +20,11 @@ sys.path.append(src_path)
 
 from pert_bags import BagCreator
 from bag_sampler import BootstrapBagSampler
-from dataset import PerturbationDataset, MixedConditionDataset, EvalPerturbationDataset, collate_batch
+from dataset import PerturbationDataset, MixedConditionDataset, PureConditionDataset, EvalPerturbationDataset, collate_batch, collate_pure_batch
 from model import TransformerMILLightning
 
 
-@hydra.main(config_path="conf", config_name="config", version_base=None)
+@hydra.main(config_path="conf", config_name="tcell", version_base=None)
 def main(cfg: DictConfig):
     # Print configuration
     print(OmegaConf.to_yaml(cfg))
@@ -32,7 +32,7 @@ def main(cfg: DictConfig):
     
     seed_everything(cfg.training.seed)
     # Load AnnData
-    adata_path = os.path.join(cfg.paths.processed_data_dir, cfg.data.h5ad_filename)
+    adata_path = os.path.join(cfg.data.processed_data_dir, cfg.data.h5ad_filename)
     adata = sc.read_h5ad(adata_path)
     class_list = sorted(adata.obs[cfg.data.cluster_col].unique())
 
@@ -60,7 +60,7 @@ def main(cfg: DictConfig):
         condition_col=cfg.data.condition_col,
         cluster_col=cfg.data.cluster_col,
         control_condition=cfg.data.control_condition,
-        matching_index_path=cfg.paths.matching_index_path
+        matching_index_path=cfg.data.matching_index_path
     )
     if cfg.data.compute_matching:
         # Always compute matching for all conditions
@@ -85,19 +85,44 @@ def main(cfg: DictConfig):
     # Create sampler for training
     sampler = BootstrapBagSampler(ratio=cfg.training.sample_ratio, n_bags=cfg.training.n_bags)
     
-    # Create training dataset with condition-based sampling
-    train_dataset = MixedConditionDataset(
-        bag_creator=bag_creator,
-        sampling_conditions=training_sampling_conditions,
-        class_list=class_list,
-        pert_embeddings=pert_embeddings,
-        sampler=sampler,
-        seed=cfg.training.seed,
-        cell_embed_key=cfg.data.cell_embed_key
-    )
+    # Get whether to use matched control cells or random sampling
+    use_matched_control = cfg.data.get('use_matched_control', True)
+    
+    # Get condition mode: "pure" or "mixed"
+    condition_mode = cfg.data.get('condition_mode', 'mixed')  # Default to mixed for backward compatibility
+    
+    # Create training dataset based on condition mode
+    if condition_mode == 'pure':
+        # Pure condition: each bag has single perturbation
+        train_dataset = PureConditionDataset(
+            bag_creator=bag_creator,
+            sampling_conditions=training_sampling_conditions,
+            class_list=class_list,
+            pert_embeddings=pert_embeddings,
+            sampler=sampler,
+            seed=cfg.training.seed,
+            cell_embed_key=cfg.data.cell_embed_key,
+            use_matched_control=use_matched_control
+        )
+        train_collate_fn = collate_pure_batch
+        is_pure_mode = True
+    else:
+        # Mixed condition: bags can have multiple perturbations
+        train_dataset = MixedConditionDataset(
+            bag_creator=bag_creator,
+            sampling_conditions=training_sampling_conditions,
+            class_list=class_list,
+            pert_embeddings=pert_embeddings,
+            sampler=sampler,
+            seed=cfg.training.seed,
+            cell_embed_key=cfg.data.cell_embed_key,
+            use_matched_control=use_matched_control
+        )
+        train_collate_fn = collate_batch
+        is_pure_mode = False
 
     # Create validation and test datasets using EvalPerturbationDataset
-    # These use randomly sampled control cells, not matched ones
+    # EvalPerturbationDataset always returns pure format (single pert_emb per bag)
     val_dataset = EvalPerturbationDataset(
         perturbation_conditions=list(val_conditions),
         adata=adata,
@@ -123,7 +148,11 @@ def main(cfg: DictConfig):
     )
 
     # Dataloaders
-    train_loader = DataLoader(train_dataset, batch_size=cfg.training.batch_size, shuffle=True, collate_fn=collate_batch)
+    train_loader = DataLoader(train_dataset, batch_size=cfg.training.batch_size, shuffle=True, collate_fn=train_collate_fn)
+    
+    # For val/test: EvalPerturbationDataset returns per-cell format, but all cells in a bag have same pert_emb
+    # We can convert to pure format by taking first pert_emb of each bag, or use per-cell format
+    # Since model handles both formats, we'll use collate_batch for val/test
     val_loader = DataLoader(val_dataset, batch_size=cfg.training.batch_size, shuffle=False, collate_fn=collate_batch)
     test_loader = DataLoader(test_dataset, batch_size=cfg.training.batch_size, shuffle=False, collate_fn=collate_batch)
 
@@ -135,8 +164,9 @@ def main(cfg: DictConfig):
         **cfg.model
     )
 
-    # WandB logger
-    wandb_logger = WandbLogger(project=cfg.logger.project, name=cfg.logger.name,log_model=cfg.logger.log_model)
+    # WandB logger - use name from config (h5ad filename without "_fix.h5ad")
+    logger_name = cfg.logger.name.replace("_fix.h5ad", "") if cfg.logger.name else cfg.data.h5ad_filename.replace("_fix.h5ad", "")
+    wandb_logger = WandbLogger(project=cfg.logger.project, name=logger_name, log_model=cfg.logger.log_model)
     # Push full Hydra config to Weights & Biases config for complete traceability
     try:
         wandb_logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True), allow_val_change=True)
@@ -194,12 +224,11 @@ def main(cfg: DictConfig):
     with torch.no_grad():
         dataset_index = 0
         for batch in test_loader:
-            bags, attn_mask, target_proportions, _cell_labels, pert_emd, control_props = batch
+            bags, attn_mask, target_proportions, _cell_labels, pert_emd, _control_props = batch
             bags = bags.to(device)
             attn_mask = attn_mask.to(device)
             pert_emd = pert_emd.to(device)
-            control_props = control_props.to(device)
-            pred_prop, _ = trained_model(bags, pert_emd, attn_mask, control_props)
+            pred_prop, _ = trained_model(bags, pert_emd, attn_mask)
             pred_prop = pred_prop.detach().cpu().numpy()
             target_np = target_proportions.detach().cpu().numpy()
 

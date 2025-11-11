@@ -12,4 +12,4 @@
 source ~/.bashrc
 conda activate pop
 
-python train.py 
+python train.py data=all
