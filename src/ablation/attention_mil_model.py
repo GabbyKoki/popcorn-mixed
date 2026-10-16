@@ -124,7 +124,7 @@ class AttentionMILLightning(LightningModule):
         return output_prop, attention_weights
 
     def training_step(self, batch, batch_idx):
-        bags, attn_mask, labels, cell_labels, pert_emd, control_props = batch
+        bags, _pert_cells, attn_mask, labels, cell_labels, pert_emd, control_props = batch
         prop_pred, attention_weights = self(bags, pert_emd, attn_mask, control_props)
 
         # Only proportion loss (no cell loss in attention-only model)
@@ -138,7 +138,7 @@ class AttentionMILLightning(LightningModule):
         return prop_loss
 
     def validation_step(self, batch, batch_idx):
-        bags, attn_mask, target_proportions, cell_labels, pert_emd, control_props = batch
+        bags, _pert_cells, attn_mask, target_proportions, cell_labels, pert_emd, control_props = batch
         prop_pred, attention_weights = self(bags, pert_emd, attn_mask, control_props)
 
         # Proportion metrics per bag
@@ -176,7 +176,7 @@ class AttentionMILLightning(LightningModule):
         }, prog_bar=True, on_epoch=True)
     
     def test_step(self, batch, batch_idx):
-        bags, attn_mask, target_proportions, cell_labels, pert_emd, control_props = batch
+        bags, _pert_cells, attn_mask, target_proportions, cell_labels, pert_emd, control_props = batch
         prop_pred, attention_weights = self(bags, pert_emd, attn_mask, control_props)
 
         # Proportion metrics per bag

@@ -8,6 +8,19 @@ dropout: 0.1
 # Fusion type: "add", "gated", or "cross_attn"
 fusion_type: "add"  # default: simple addition (backward compatible)
 
+# Cell-level perturbation latent transport ablation
+latent_alignment_mode: "none"   # "none", "sinkhorn"
+latent_alignment_weight: 0.0
+sinkhorn_epsilon: 0.1
+sinkhorn_iters: 30
+
+# Bag-level proportion loss: "mse", "kl", or "mmd"
+prop_loss_type: "mse"
+mmd_sigma: null  # null = auto (median heuristic)
+
 # Learning parameters
 lr: 1e-3
 cell_loss_weight: 0.5
+type_prop_loss_weight: 1.0
+subcluster_prop_loss_weight: 1.0
+subcluster_cell_loss_weight: 0.5

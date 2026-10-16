@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - override /data: all
+  - override /model: default
+  - override /training: default
+  - override /logger: default
+
+data:
+  condition_mode: mixed
+  fold_idx: 0
+
+model:
+  fusion_type: add

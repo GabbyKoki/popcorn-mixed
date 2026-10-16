@@ -8,8 +8,10 @@
 #SBATCH --gpus=1
 #SBATCH --output=logs/%x_%j.out
 
+set -euo pipefail
 
 source ~/.bashrc
 conda activate pop
 
-python train.py data=all
+# Backward-compatible launcher; delegates to the new family runner.
+bash experiments/core_training/run.sh data=all "$@"

@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - override /data: schmidt
+  - override /model: default
+  - override /training: default
+  - override /logger: hyper

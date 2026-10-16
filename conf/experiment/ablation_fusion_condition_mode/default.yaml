@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /data: all
+  - override /model: default
+  - override /training: default
+  - override /logger: default
+
+data:
+  use_matched_control: true
+  fold_idx: 0

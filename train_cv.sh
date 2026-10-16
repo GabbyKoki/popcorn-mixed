@@ -8,8 +8,10 @@
 #SBATCH --gpus=1
 #SBATCH --output=logs/%x_%j.out
 
+set -euo pipefail
 
 source ~/.bashrc
 conda activate pop
 
-python train.py -m data=all data.fold_idx=0,1,2,3,4
+# Backward-compatible launcher for CV family.
+bash experiments/cv/run.sh "$@"

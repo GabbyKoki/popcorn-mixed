@@ -8,6 +8,10 @@
 #SBATCH --gpus=1
 #SBATCH --output=logs/%x_%j.out
 
+set -euo pipefail
 
+source ~/.bashrc
+conda activate pop
 
-for fold in 0 1 2 3 4; do python train.py data=all data.use_matched_control=false logger.name="ot_random_fold${fold}" data.fold_idx=${fold}; done
+# Backward-compatible launcher for OT ablation CV.
+bash experiments/ablation_ot_matching/run_cv.sh "$@"

@@ -1,0 +1,16 @@
+torch
+pytorch-lightning
+torchmetrics
+numpy
+pandas
+scipy
+scikit-learn
+scanpy
+anndata
+h5py
+hydra-core
+omegaconf
+wandb
+matplotlib
+plotly
+seaborn

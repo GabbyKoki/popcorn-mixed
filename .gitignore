@@ -210,3 +210,70 @@ __marimo__/
 /logs/
 /comparison_results/
 /ablation/
+/evaluation/
+/popcorn_mixed_mini_bags_ood/
+
+# Local datasets and generated outputs
+/data/
+/outputs/
+/logs/
+/wandb/
+/exp/
+/submission-processed/
+/pop_align_ablation_schmidt/
+outputs/
+logs/
+wandb/
+checkpoints/
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+*.py[cod]
+.DS_Store
+
+# Large data, checkpoints and generated figures
+*.h5ad
+*.h5
+*.hdf5
+*.loom
+*.pkl
+*.pickle
+*.pt
+*.pth
+*.ckpt
+*.npy
+*.npz
+*.png
+*.jpg
+*.jpeg
+*.pdf
+*.svg
+*.tiff
+*.tif
+*.zip
+*.tar.gz
+*.out
+*.err
+
+# Run exports at repository root
+/ood_predictions_with_labels.csv
+/ood_predictions_with_labels.json
+/ood_metric_summary.json
+/experiment_results.json
+/class_labels_order.json
+
+# Separate checkouts and private manuscript working files
+/manuscript/
+/external/
+/tools/AutoR/
+
+# Keep experiment Python/shell scripts and YAML/JSON configurations trackable.
+# Do not ignore experiments/ or submission/ wholesale: both contain source code.
+
+# Generated tables and result directories
+results/
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.zarr/

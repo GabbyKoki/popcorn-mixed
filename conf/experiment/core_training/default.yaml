@@ -1,0 +1,19 @@
+# @package _global_
+defaults:
+  - override /data: all
+  - override /model: default
+  - override /training: default
+  - override /logger: default
+
+# Canonical core training defaults
+# Override these from CLI as needed.
+data:
+  fold_idx: 0
+  condition_mode: mixed
+  use_matched_control: true
+
+model:
+  fusion_type: add
+
+logger:
+  name: core_training__all__fold${data.fold_idx}__${data.condition_mode}_${model.fusion_type}_${data.use_matched_control}

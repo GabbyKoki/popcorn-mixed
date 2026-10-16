@@ -1,0 +1,16 @@
+# @package _global_
+defaults:
+  - override /data: all
+  - override /model: default
+  - override /training: default
+  - override /logger: default
+
+# Canonical CV setup
+hydra:
+  mode: MULTIRUN
+
+data:
+  fold_idx: 0
+
+logger:
+  name: cv__all__fold${data.fold_idx}__${data.condition_mode}_${model.fusion_type}_${data.use_matched_control}

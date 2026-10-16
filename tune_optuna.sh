@@ -8,8 +8,10 @@
 #SBATCH --gpus=1
 #SBATCH --output=logs/%x_%j.out
 
+set -euo pipefail
 
 source ~/.bashrc
 conda activate pop
 
-python train.py -m +sweep=optuna 
+# Backward-compatible launcher for HPO family (Optuna).
+bash experiments/hpo/run_optuna.sh "$@"

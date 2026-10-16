@@ -1,0 +1,4 @@
+# Family-local documentation preset
+family: core_training
+entrypoint: train.py
+hydra_override: +experiment=core_training/default

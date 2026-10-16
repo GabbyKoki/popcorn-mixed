@@ -14,6 +14,9 @@ split_col: split_${data.fold_idx}
 # Embedding keys
 cell_embed_key: X_scgpt_CP_512  # X or in adata.obsm "scVI_10", "scGPT", ...
 pert_embedding_key: esm2_gene_embedding_2560  # in adata.uns
+encoder_variant: ""  # Optional submission alias: scgpt512, pca100_train, hvg5000_train
+encoder_pca_n_comps: 100
+encoder_hvg_top_genes: 5000
 
 # Matching configuration
 matching_index_path: ${data.processed_data_dir}/matching_index.pkl
